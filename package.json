@@ -1,0 +1,44 @@
+{
+  "name": "redis_node",
+  "version": "1.0.0",
+  "description": "A Node server built to optimize delivery",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "redis-server && node serverEntry.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bryanschauerte/RedisNode.git"
+  },
+  "keywords": [
+    "redis",
+    "node",
+    "jswt",
+    "express"
+  ],
+  "author": "Bryan Schauerte",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bryanschauerte/RedisNode/issues"
+  },
+  "homepage": "https://github.com/Bryanschauerte/RedisNode#readme",
+  "dependencies": {
+    "babel-register": "^6.22.0",
+    "body-parser": "^1.16.1",
+    "browserify-middleware": "^7.1.0",
+    "compression": "^1.6.2",
+    "cors": "^2.8.1",
+    "express": "^4.14.1",
+    "express-jwt": "^5.1.0",
+    "fs": "0.0.1-security",
+    "helmet": "^3.4.0",
+    "jsonwebtoken": "^7.2.1",
+    "redis": "^2.6.5"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-0": "^6.22.0"
+  }
+}
