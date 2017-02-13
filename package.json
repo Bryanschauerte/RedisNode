@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "redis-server && node serverEntry.js"
+    "startRedis": "redis/redis-3.2.8/src/redis-server",
+    "startNode": "node serverEntry.js",
+    "start": "npm run startRedis | npm run startNode"
   },
   "repository": {
     "type": "git",
@@ -28,11 +30,16 @@
     "body-parser": "^1.16.1",
     "browserify-middleware": "^7.1.0",
     "compression": "^1.6.2",
+    "connect-redis": "^3.2.0",
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "express-jwt": "^5.1.0",
+    "express-redis-cache": "^0.5.0",
+    "express-session": "^1.15.1",
     "fs": "0.0.1-security",
     "helmet": "^3.4.0",
+    "ioredis": "^2.5.0",
+    "jade": "^1.11.0",
     "jsonwebtoken": "^7.2.1",
     "redis": "^2.6.5"
   },

@@ -10,10 +10,22 @@ const expressJWT = require('express-jwt');
 const compression = require('compression');
 const helmet = require('helmet');
 const app = express();
-const redis = require('redis')
-let client = redis.createClient();
+
+// loredis to have easier access to expiration, just for cacheParamToy route
+var Redis = require('ioredis');
+var redis = new Redis();
+
+// caching routes -> anything complied on the server (*cough *cought react)
+var cache = require('express-redis-cache')({ expire: 60 });
+
+// Jade for templeting but would be amazing for iso react
+
+var jade = require('jade');
+
+// to allow es6 and modules
 browserify.settings.mode = 'production';
 browserify.settings({transform: ['babelify']});
+
 app.use(compression({filter: shouldCompress}))
 app.use(helmet());
 app.use(helmet.xssFilter());
@@ -22,12 +34,32 @@ app.use(helmet.ieNoOpen());
 app.use(helmet.noSniff());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ type: 'application/json' }))
-app.use('/assets', express.static('assets'));
-app.get('/cacheToy', cache, getNumber);
 
-client.on('connect', function() {
-    console.log('connected');
-});
+
+//jade view engine
+app.set('views', __dirname + '/views')
+app.set('view engine', 'jade')
+
+
+app.use('/assets', express.static('assets'));
+
+//testing speed of param requests
+// Also how one would do an api call that may need to be chached
+//ex. postman get request http://localhost:3000/cacheParamToy?someKey=22
+app.get('/cacheParamToy', cacheIt, nexTick);
+
+// Whole route is cache, condition can be swapped with a cookie or session ect.
+app.get('/jadeRoute', useCache, renderJade)
+
+
+// route handlers
+function useCache(req, res,next){
+  !req.query.ignoreCache? cache.route({name:'jadeRoute'}): next();
+}
+
+function renderJade(req, res){
+  res.render('viewTemp', { title: 'Hey', message: 'Hello there!' })
+}
 
 function shouldCompress (req, res) {
   if (req.headers['x-no-compression']) {
@@ -36,32 +68,30 @@ function shouldCompress (req, res) {
   return compression.filter(req, res)
 }
 
-
-
-function cache(req, res, next) {
+function cacheIt(req, res, next) {
     const someKey = req.query.someKey;
-    client.get(someKey, function (err, data) {
+    redis.get('someKey', function (err, data) {
         if (err) throw err;
-
+        if(data == null){
+          redis.set('someKey', req.query.someKey);
+          return res.send('i was not cached')
+        }
         if (data != null) {
-            res.send(respond(someKey, data));
+            res.send(`someKey cached value, ${data}`);
         } else {
             next();
         }
     });
 }
-function getNumber(req, res, next) {
-    return res.send('i was not cached')
+
+function nexTick(req, res, next) {
+    return res.send('Im the next tick')
 };
 
 //
-///error handling///
+///  [error handling]  ///
 //
 
-client.on('error', function (er) {
-  console.trace('Module A') // [1]
-  console.error(er.stack) // [2]
-})
 
 process.on('uncaughtException', function (er) {
   console.error(er.stack)
@@ -72,4 +102,5 @@ process.on('uncaughtException', function (er) {
 
 app.listen(3000, function () {
   console.log('Monkey juggling on port 3000!')
+
 })

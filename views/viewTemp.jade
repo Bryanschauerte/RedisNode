@@ -1,0 +1,15 @@
+doctype
+html
+  head
+    title #{title} - which is a variable
+    link(rel='stylesheet', href='/assets/stylesheet.css')
+  body
+    header
+      h1 My Site is so rendery and nifty
+    .container
+      .main-content
+        block content
+      .sidebar
+        block sidebar
+    footer
+      p Running on node with Express, Jade and cached
