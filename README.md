@@ -29,3 +29,5 @@
 
 #### Compression
 - Compresses and produces faster responses
+
+### Instructions for Installation
